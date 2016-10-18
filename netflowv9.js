@@ -115,6 +115,10 @@ class NetFlowV9 extends eventEmitter {
         }
     };
 
+    close() {
+        this.server.close();
+    }
+
     /*
      * nfPktDecode(msg: string,rinfo: Object{address,port})
      * Decode NetflowV9 message.

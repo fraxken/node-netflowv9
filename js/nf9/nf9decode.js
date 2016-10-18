@@ -457,6 +457,7 @@ var nfScope = {
 function nf9PktDecode(msg,rinfo,v9Templates) {
     // Forward good templates here!
     var templates = v9Templates || {};
+    var nfScope = nfScope || {};
     var id = rinfo.address + ':' + rinfo.port;
 
     var out = { 
