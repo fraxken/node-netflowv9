@@ -49,7 +49,7 @@ class NetFlowV9 extends eventEmitter {
         });
         this.server.on('error',err => this.emit('error') );
         this.server.on('close', _ => this.emit('close'));
-        this.server.listen(options.port, options.host);
+        this.server.bind(options.port, options.host);
     }
 
     /*
@@ -142,17 +142,38 @@ class NetFlowV9 extends eventEmitter {
         debug('entering into nfPktDecode with version =>'+version);
         switch (version) {
             case 1:
-                return nf1PktDecode(msg,rinfo);
+                return NetFlowV9.nf1Decode(msg,rinfo);
             case 5:
-                return nf5PktDecode(msg,rinfo);
+                return NetFlowV9.nf5Decode(msg,rinfo);
             case 7:
-                return nf7PktDecode(msg,rinfo);
+                return NetFlowV9.nf7Decode(msg,rinfo);
             case 9:
-                return nf9PktDecode(msg,rinfo,this.templates);
+                // Create a new instance of the class here!, extend with right information!
+                // Use .decode function
+                return NetFlowV9.nf9Decode(msg,rinfo,this.templates);
             default:
                 debug('bad header version %d', version);
                 return;
         }
+    }
+
+    /*
+     * Decode static functions
+     */
+    static nf1Decode(msg,rinfo) {
+        return nf1PktDecode(msg,rinfo);
+    }
+
+    static nf5Decode(msg,rinfo) {
+        return nf5PktDecode(msg,rinfo);
+    }
+
+    static nf7Decode(msg,rinfo) {
+        return nf7PktDecode(msg,rinfo);
+    }
+
+    static nf9Decode(msg,rinfo,templates) {
+        return nf9PktDecode(msg,rinfo,templates);
     }
 
 }
