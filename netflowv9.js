@@ -116,16 +116,6 @@ class NetFlowV9 extends eventEmitter {
     };
 
     /*
-     * addTemplate(template: Object,rinfo: Object{address,port})
-     * Add a template for NetflowV9. Put your data.templates as template arg value.
-     */
-    addTemplate (template,rinfo) {
-        const id = rinfo.address + ':' + rinfo.port;
-        const tId = Object.keys(template[id])[0];
-        this.templates[tId] = template[id][tId];
-    }
-
-    /*
      * nfPktDecode(msg: string,rinfo: Object{address,port})
      * Decode NetflowV9 message.
      */
