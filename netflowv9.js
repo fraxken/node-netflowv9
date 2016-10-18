@@ -107,7 +107,7 @@ class NetFlowV9 extends eventEmitter {
                 finalObject.rinfo = rinfo;
                 //o.packet = msg;
                 finalObject.decodeMs = timeMs;
-                this.emit('data',finalObject);
+                this.emit('message',finalObject);
             } 
             else if (finalObject.templates) { // If the packet is the template.
                 finalObject.rinfo = rinfo;
