@@ -47,7 +47,7 @@ class NetFlowV9 extends eventEmitter {
                 } );
             }
         });
-        this.server.on('error',err => this.emit('error') );
+        this.server.on('error',err => this.emit('error',err) );
         this.server.on('close', _ => this.emit('close'));
         this.server.bind(options.port, options.host);
     }
@@ -98,28 +98,21 @@ class NetFlowV9 extends eventEmitter {
         let finalObject = this.nfPktDecode(msg,rinfo);
         const timeMs = (new Date().getTime()) - startTime;
         debug('Flows length => '+finalObject.flows.length);
-        if(finalObject) {
-            debug('Undefined flows',finalObject);
-            return;
+        if (finalObject && finalObject.flows.length > 0) { // If the packet contain flows.
+            finalObject.rinfo = rinfo;
+            //o.packet = msg;
+            finalObject.decodeMs = timeMs;
+            this.emit('message',finalObject);
+        } 
+        else if (finalObject && finalObject.templates) { // If the packet is the template.
+            finalObject.rinfo = rinfo;
+            //o.packet = msg;
+            finalObject.decodeMs = timeMs;
+            this.emit('template', finalObject);
+        } 
+        else { // Not a template and not a package with flows content!
+            debug('Undecoded flows',finalObject);
         }
-        else {
-            if (finalObject.flows.length > 0) { // If the packet contain flows.
-                finalObject.rinfo = rinfo;
-                //o.packet = msg;
-                finalObject.decodeMs = timeMs;
-                this.emit('message',finalObject);
-            } 
-            else if (finalObject.templates) { // If the packet is the template.
-                finalObject.rinfo = rinfo;
-                //o.packet = msg;
-                finalObject.decodeMs = timeMs;
-                this.emit('template', finalObject);
-            } 
-            else { // Not a template and not a package with flows content!
-                debug('Undecoded flows',finalObject);
-            }
-        }
-        
     };
 
     /*
@@ -130,7 +123,6 @@ class NetFlowV9 extends eventEmitter {
         const id = rinfo.address + ':' + rinfo.port;
         const tId = Object.keys(template[id])[0];
         this.templates[tId] = template[id][tId];
-        console.log(this.templates);
     }
 
     /*
