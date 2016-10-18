@@ -11,17 +11,12 @@ The library is still under development, please be careful! It has been tested wi
 The usage of the netflowv9 collector library is very very simple. You just have to do something like this:
 
 
-    var Collector = require('node-netflowv9');
-
-    Collector(function(flow) {
-        console.log(flow);
-    }).listen(3000);
-
-or you can use it as event provider:
-
-    Collector({port: 3000}).on('data',function(flow) {
-        console.log(flow);
-    });
+    const NodeNetflowV9 = require('node-netflowv9');
+	
+	const Collector = new NodeNetflowV9({port: 3000});
+	Collector.on('message',(flow) => {
+		console.log(flow);
+	});
 
 
 The flow will be presented in a format very similar to this:
@@ -68,12 +63,12 @@ There will be one callback for each packet, which may contain more than one flow
 
 Additionally, you can use the collector to listen for template updates:
 
-    var collector = Collector({port: 3000});
-    collector.on('data', function(data) {
-        console.log(data);
+    const Collector = new NodeNetflowV9({port: 3000});
+    Collector.on('message', function(packet) {
+        console.log(packet);
     });
-    collector.on('template', function(data) {
-        console.log(data);
+    Collector.on('template', function(packet) {
+        console.log(packet);
     });
 
 You can also access a NetFlow decode function directly. Do something like this:
@@ -105,14 +100,6 @@ If no port is provided, then the underlying socket will not be initialized (bind
 **templates** - provides the default templates to be used for incoming traffic
 
     Collector({ port: 5000, templates: { '127.0.0.1:5323': { '235': { len: 344, ...
-
-**cb** - defines a callback function to be executed for every flow. If no call back function is provided, then the collector fires 'data' event for each received flow
-
-    Collector({ cb: function (flow) { console.log(flow) } }).listen(5000)
-
-**templateCb** - defines a callback function to be executed for templates. If no call back function is provided, then the collector fires 'template' event for the received templates.
-
-    Collector({ templateCb: function(data) { console.log(data) } }).listen(5000);
 
 **ipv4num** - defines that we want to receive the IPv4 ip address as a number, instead of decoded in a readable dot format
 
